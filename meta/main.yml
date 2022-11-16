@@ -1,0 +1,25 @@
+galaxy_info:
+  role_name: offline_pip
+  namespace: chaliy
+  author: Mykhailo Chalyi
+  description: Install Python pip into air-gapped offline environments
+  
+  issue_tracker_url: https://github.com/chaliy/ansible-role-offline-pip/issues
+
+  license: MIT
+
+  min_ansible_version: "2.1"
+
+  platforms:
+  - name: Ubuntu
+    versions:
+      - all
+
+  galaxy_tags:
+    - python
+    - pip
+    - airgapped
+    - offline
+    - install
+
+dependencies: []

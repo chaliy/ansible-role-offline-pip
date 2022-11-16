@@ -1,0 +1,11 @@
+---
+# Required path to the pip .tar.gz file (e.g. pip-19.3.1.tar.gz) 
+pip_tar_path: null # pip-19.3.1.tar.gz
+
+pip_executable: pip3
+python_executable: python3
+
+# When defined, path the local wheels folder, files will be used in --find-link
+pip_wheels_path: null
+pip_names: null
+pip_requirements: null

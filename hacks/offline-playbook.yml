@@ -1,0 +1,27 @@
+---
+- name: Save offline artificates
+  hosts: localhost
+  connection: local
+
+  vars:
+    offline_path: ./.offline
+    
+  tasks:
+    # Offline Pip
+    - name: Download pip 🚢
+      ansible.builtin.get_url:
+        url: https://files.pythonhosted.org/packages/ce/ea/9b445176a65ae4ba22dce1d93e4b5fe182f953df71a145f557cffaffc1bf/pip-19.3.1.tar.gz
+        dest: "{{ offline_path }}"
+        mode: u=rw,g=r,o=r
+
+    - name: Create wheels directory 🔧
+      ansible.builtin.file:
+        path: "{{ offline_path }}/wheels"
+        state: directory
+        recurse: true
+
+    - name: Download offline wheels 🚢
+      ansible.builtin.shell:
+        cmd: pip wheel --wheel-dir={{ offline_path }}/wheels docker jsondiff
+      register: offline_wheels
+      changed_when: offline_wheels.rc != 0

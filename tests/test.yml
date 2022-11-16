@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - role: ..
+      pip_tar_path: ./files/pip-19.3.1.tar.gz

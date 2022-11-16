@@ -1,0 +1,53 @@
+---
+- name: Check if pip already installed 🔧
+  ansible.builtin.command:
+    cmd: "{{ pip_executable }} --version"
+  ignore_errors: true
+  register: pip_version
+  changed_when: pip_version is failed
+
+- name: Unarchive PIP to target file system 📦
+  ansible.builtin.unarchive:
+    src: "{{ pip_tar_path | mandatory }}"
+    dest: /etc/
+  when: pip_version is failed
+
+- name: Install pip 👨‍🍳
+  ansible.builtin.command:
+    cmd: "{{ python_executable }} setup.py install"
+    chdir: "/etc/{{ pip_tar_path | basename | regex_replace('.tar.gz', '') }}"
+  when: pip_version is failed
+
+- name: Validate if pip installed ✨
+  ansible.builtin.command:
+    cmd: "{{ pip_executable }} --version"
+  when: pip_version is failed
+
+# Install offline wheels
+- name: Create wheels directory 🔧
+  ansible.builtin.file:
+    path: /etc/wheels
+    state: directory
+    recurse: true
+  when: pip_wheels_path != None
+
+- name: Copy wheels to Guest 🔧
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/wheels
+    mode: u=rw,g=r,o=r
+  with_fileglob:
+    - "{{ pip_wheels_path }}/*"
+  when: pip_wheels_path != None
+
+- name: Install Python packages 🔧
+  ansible.builtin.pip:
+    name: "{{ pip_names }}"
+    extra_args: --no-index --find-links=/etc/wheels
+  when: pip_wheels_path != None and pip_names != None
+
+- name: Install Python packages 🔧
+  ansible.builtin.pip:
+    requirements: "{{ pip_requirements }}"
+    extra_args: --no-index --find-links=/etc/wheels
+  when: pip_wheels_path != None and pip_requirements != None
